@@ -33,16 +33,16 @@ def add_item(name: str = Form(...), category: str = Form(...)):
     # If there is the file items.json, load it as a python dictionary.
     if os.path.isfile('items.json'):
         with open("items.json", 'r') as write_file:
-            file_data = json.load(write_file)
+            data = json.load(write_file)
 
     # Add a new item into python dictionary
     new_item = {"name": name, "category": category}
-    file_data["item"].append(new_item)
+    data["item"].append(new_item)
 
     # Convert the python dictionary into a json
     with open("items.json", "w") as write_file:
-        json.dump(file_data, write_file)
-    
+        json.dump(data, write_file)
+
     return {"message": f"item received: {name}"}
 
 @app.get("/image/{items_image}")
