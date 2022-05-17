@@ -27,9 +27,6 @@ def root():
 def add_item(name: str = Form(...), category: str = Form(...)):
     logger.info(f"Receive item: {name}")
 
-    # define format of the dictionaty to be stored
-    data = {"item":[]}
-
     # If there is the file items.json, load it as a python dictionary.
     if os.path.isfile('items.json'):
         with open("items.json", 'r') as write_file:
