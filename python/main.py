@@ -1,6 +1,7 @@
 import os
 import logging
 import pathlib
+import json
 from fastapi import FastAPI, Form, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,8 +24,25 @@ def root():
     return {"message": "Hello, world!"}
 
 @app.post("/items")
-def add_item(name: str = Form(...)):
+def add_item(name: str = Form(...), category: str = Form(...)):
     logger.info(f"Receive item: {name}")
+
+    # define format of the dictionaty to be stored
+    data = {"item":[]}
+
+    # If there is the file items.json, load it as a python dictionary.
+    if os.path.isfile('items.json'):
+        with open("items.json", 'r') as write_file:
+            file_data = json.load(write_file)
+
+    # Add a new item into python dictionary
+    new_item = {"name": name, "category": category}
+    file_data["item"].append(new_item)
+
+    # Convert the python dictionary into a json
+    with open("items.json", "w") as write_file:
+        json.dump(file_data, write_file)
+    
     return {"message": f"item received: {name}"}
 
 @app.get("/image/{items_image}")
