@@ -29,12 +29,12 @@ def add_item(name: str = Form(...), category: str = Form(...)):
 
     # If there is the file items.json, load it as a python dictionary.
     if os.path.isfile('items.json'):
-        with open("items.json", 'r') as write_file:
+        with open("items.json", "r") as write_file:
             data = json.load(write_file)
 
     # Add a new item into python dictionary
     new_item = {"name": name, "category": category}
-    data["item"].append(new_item)
+    data["items"].append(new_item)
 
     # Convert the python dictionary into a json
     with open("items.json", "w") as write_file:
