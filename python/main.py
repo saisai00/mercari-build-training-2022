@@ -42,6 +42,15 @@ def add_item(name: str = Form(...), category: str = Form(...)):
 
     return {"message": f"item received: {name}"}
 
+@app.get("/items")
+def get_item():
+    # If there is the file items.json, load it as a python dictionary.
+    if os.path.isfile('items.json'):
+        with open("items.json", 'r') as write_file:
+            data = json.load(write_file)
+
+    return data
+
 @app.get("/image/{items_image}")
 async def get_image(items_image):
     # Create image path
