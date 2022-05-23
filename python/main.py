@@ -2,6 +2,7 @@ import os
 import logging
 import pathlib
 import json
+import sqlite3
 from fastapi import FastAPI, Form, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,28 +27,44 @@ def root():
 @app.post("/items")
 def add_item(name: str = Form(...), category: str = Form(...)):
     logger.info(f"Receive item: {name}")
+    # Connect the database mercari.sqlite3
+    conn = sqlite3.connect('../db/mercari.sqlite3')
 
-    # If there is the file items.json, load it as a python dictionary.
-    if os.path.isfile('items.json'):
-        with open("items.json", "r") as write_file:
-            data = json.load(write_file)
+    # Make a cursor
+    c = conn.cursor()
 
-    # Add a new item into python dictionary
-    new_item = {"name": name, "category": category}
-    data["items"].append(new_item)
+    # Add a new item
+    c.execute("INSERT INTO items (name, category) VALUES (?,?)", (name, category))
 
-    # Convert the python dictionary into a json
-    with open("items.json", "w") as write_file:
-        json.dump(data, write_file)
+    # Commit our command
+    conn.commit()
+
+    # Close our connection
+    conn.close()
 
     return {"message": f"item received: {name}"}
 
 @app.get("/items")
 def get_item():
-    # If there is the file items.json, load it as a python dictionary.
-    if os.path.isfile('items.json'):
-        with open("items.json", 'r') as write_file:
-            data = json.load(write_file)
+
+    # Connect the database mercari.sqlite3
+    conn = sqlite3.connect('../db/mercari.sqlite3')
+
+    # Make a cursor
+    c = conn.cursor()
+
+    # select all the data in "items" table
+    c.execute('''SELECT * FROM items''')
+    stored_items = c.fetchall()
+
+    # make a list of all the data taken from "items" table
+    data = {"items": [{"id": id, "name": name, "category": category} for (id, name, category) in stored_items] }
+
+    # Commit our command
+    conn.commit()
+
+    # Close our connection
+    conn.close()
 
     return data
 
