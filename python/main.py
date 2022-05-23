@@ -68,6 +68,29 @@ def get_item():
 
     return data
 
+@app.get("/search")
+def search_item(keyword: str):
+    # Connect the database mercari.sqlite3
+    conn = sqlite3.connect('../db/mercari.sqlite3')
+
+    # Make a cursor
+    c = conn.cursor()
+
+    # select all the data include "Keyword"
+    c.execute("SELECT * from items WHERE name LIKE (?)", (f"%{keyword}%", ))
+    stored_items = c.fetchall()
+
+    # make a list of all the data taken from "items" table
+    data = {"items": [{"id": id, "name": name, "category": category} for (id, name, category) in stored_items] }
+
+    # Commit our command
+    conn.commit()
+
+    # Close our connection
+    conn.close()
+
+    return data
+
 @app.get("/image/{image_filename}")
 async def get_image(image_filename):
     # Create image path
