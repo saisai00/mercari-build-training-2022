@@ -60,9 +60,6 @@ def get_item():
     # make a list of all the data taken from "items" table
     data = {"items": [{"id": id, "name": name, "category": category} for (id, name, category) in stored_items] }
 
-    # Commit our command
-    conn.commit()
-
     # Close our connection
     conn.close()
 
@@ -82,9 +79,6 @@ def search_item(keyword: str):
 
     # make a list of all the data taken from "items" table
     data = {"items": [{"id": id, "name": name, "category": category} for (id, name, category) in stored_items] }
-
-    # Commit our command
-    conn.commit()
 
     # Close our connection
     conn.close()
